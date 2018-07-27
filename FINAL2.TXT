@@ -77,7 +77,7 @@ void loop() {
   unsigned long currentMillis = millis();  // esto guarda la información cada "interval" tiempo
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-//    guarda();
+    guarda();
   }
   if (Serial.available() > 0) {
     // read the incoming byte:
@@ -90,7 +90,7 @@ void loop() {
     }
     if (incomingByte == 50) { // tecla 2 INFORMACIÓN DEL GPS
       getgps();
-      guarda();
+      //guarda();
     }
     if (incomingByte == 51) { // tecla 3 GUARDA HISTORIAL
       guardahistorial();
@@ -306,24 +306,51 @@ void guardahistorial() {
   SdFile::dateTimeCallback(datarchivo);
   archivo = SD.open(nombrearchivo, FILE_WRITE);
   unsigned long age;
-  //  This sketch displays information every time a new sentence is correctly encoded.
-  //  while (ss.available() > 0) {
-  gps.encode(ss.read());
-  Serial.println("\nHistorial guardado");
-  //  if (gps2.location.isUpdated()) {
-  Serial.print("Lat= ");
-  Serial.print(gps.location.lat(), 6);
-  Serial.print(" Lon= ");
-  Serial.print(gps.location.lng(), 6);
-  Serial.print(", Age= ");
-  Serial.print(gps.location.age());
-  Serial.print("ms.");
+  if (archivo)
+  {
+    //  This sketch displays information every time a new sentence is correctly encoded.
+    //  while (ss.available() > 0) {
+    gps.encode(ss.read());
+    Serial.println("\nHistorial guardado");
+    //  if (gps2.location.isUpdated()) {
+    Serial.print("Lat= ");
+    Serial.print(gps.location.lat(), 6);
+    Serial.print(" Lon= ");
+    Serial.print(gps.location.lng(), 6);
+    Serial.print(", Age= ");
+    Serial.print(gps.location.age());
+    Serial.print("ms, ");
 
-  archivo.print("Lat= ");
-  archivo.print(gps.location.lat(), 6);
-  archivo.print(" Lon= ");
-  archivo.print(gps.location.lng(), 6);
-  archivo.print(", Age= ");
-  archivo.print(gps.location.age());
-  archivo.println("ms.");
+    archivo.print("Lat= ");
+    archivo.print(gps.location.lat(), 6);
+    archivo.print(" Lon= ");
+    archivo.print(gps.location.lng(), 6);
+    archivo.print(", Age= ");
+    archivo.print(gps.location.age());
+    archivo.println("ms.");
+    DateTime now = rtc.now();
+
+    archivo.print(now.year(), DEC);
+    archivo.print('/');
+    archivo.print(now.month(), DEC);
+    archivo.print('/');
+    archivo.print(now.day(), DEC);
+    archivo.print(" (");
+    archivo.print(daysOfTheWeek[now.dayOfTheWeek()]);
+    archivo.print(") ");
+    archivo.print(now.hour(), DEC);
+    archivo.print(':');
+    archivo.print(now.minute(), DEC);
+    archivo.print(':');
+    archivo.print(now.second(), DEC);
+    archivo.print(", ");
+    potenguar(); // guarda info del potenciometro
+    Serial.println(" ");
+
+    archivo.close();
+  }
+  else
+  {
+    Serial.println("El archivo datos.txt no se abrió");
+  }
 }
