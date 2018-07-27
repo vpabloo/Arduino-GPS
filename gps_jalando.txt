@@ -1,0 +1,61 @@
+/*
+   Rui Santos
+   Complete Project Details http://randomnerdtutorials.com
+*/
+
+#include <TinyGPS++.h>
+#include <SoftwareSerial.h>
+
+static const int RXPin = 10, TXPin = 9;
+static const uint32_t GPSBaud = 9600;
+int incomingByte = 0;
+
+// The TinyGPS++ object
+TinyGPSPlus gps2;
+
+// The serial connection to the GPS device
+SoftwareSerial ss(RXPin, TXPin);
+
+unsigned long previousMillis = 0; // variable para la lectura del gps cada X tiempo
+const long interval = 5000; // tiempo de intervalo de lecturas
+double lati, longi, agems;
+
+void setup() {
+  Serial.begin(9600);
+  ss.begin(GPSBaud);
+}
+
+void loop() {
+  unsigned long currentMillis = millis();  // esto guarda la información cada "interval" tiempo
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    getgps();
+  }
+}
+
+void getgps() {
+  unsigned long age;
+  // This sketch displays information every time a new sentence is correctly encoded.
+  Serial.println("Funcion ejecutada");
+  while (ss.available() > 0) {
+    gps2.encode(ss.read());
+    if (gps2.location.isUpdated()) {
+      lati = (gps2.location.lat(), 6);
+      Serial.print("Latitude= ");
+      Serial.print(lati);
+      Serial.print(" Longitude= ");
+      Serial.print(gps2.location.lng(), 6);
+      Serial.print(" Age: ");
+      Serial.println(gps2.location.age());
+    }
+  }
+}
+//------------------------------------------------
+void imphisto() {
+  Serial.print("History latitude= ");
+  Serial.print(gps2.location.lat(), 6);
+  Serial.print(" Longitude= ");
+  Serial.print(gps2.location.lng(), 6);
+  Serial.print(" Age: ");
+  Serial.println(gps2.location.age());
+}
