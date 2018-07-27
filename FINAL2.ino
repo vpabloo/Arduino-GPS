@@ -259,11 +259,11 @@ void datetime() {
 }
 //------------------------------------------------------------------------------
 void borrararchivo() {
-  Serial.println(nombrearchivo);
+  //Serial.println(nombrearchivo);
   if (SD.exists(nombrearchivo)) {
     SD.remove(nombrearchivo);
-    Serial.print("Se ha eliminado "); Serial.print(nombrearchivo); Serial.println(" exitosamente.");
-    delay(150);
+    Serial.print("\nSe ha eliminado "); Serial.print(nombrearchivo); Serial.println(" exitosamente.");
+    //delay(150);
   }
 }
 //------------------------------------------------------------------------------
@@ -310,9 +310,10 @@ void guardahistorial() {
   {
     //  This sketch displays information every time a new sentence is correctly encoded.
     //  while (ss.available() > 0) {
-    gps.encode(ss.read());
     Serial.println("\nHistorial guardado");
     //  if (gps2.location.isUpdated()) {
+    DateTime now = rtc.now();
+
     Serial.print("Lat= ");
     Serial.print(gps.location.lat(), 6);
     Serial.print(" Lon= ");
@@ -321,14 +322,29 @@ void guardahistorial() {
     Serial.print(gps.location.age());
     Serial.print("ms, ");
 
+    Serial.print(now.year(), DEC);
+    Serial.print('/');
+    Serial.print(now.month(), DEC);
+    Serial.print('/');
+    Serial.print(now.day(), DEC);
+    Serial.print(" (");
+    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+    Serial.print(") ");
+    Serial.print(now.hour(), DEC);
+    Serial.print(':');
+    Serial.print(now.minute(), DEC);
+    Serial.print(':');
+    Serial.print(now.second(), DEC);
+    Serial.print(", ");
+    potenread();
+
     archivo.print("Lat= ");
     archivo.print(gps.location.lat(), 6);
     archivo.print(" Lon= ");
     archivo.print(gps.location.lng(), 6);
     archivo.print(", Age= ");
     archivo.print(gps.location.age());
-    archivo.println("ms.");
-    DateTime now = rtc.now();
+    archivo.print("ms, ");
 
     archivo.print(now.year(), DEC);
     archivo.print('/');
