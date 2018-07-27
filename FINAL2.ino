@@ -182,12 +182,13 @@ void guarda() {
   SdFile::dateTimeCallback(datarchivo);
   archivo = SD.open(nombrearchivo, FILE_WRITE);
   unsigned long age;
+
   gps.encode(ss.read());
-  if (archivo)
-  {
-    while (ss.available() > 0) {
-      gps.encode(ss.read());
-      if (gps.location.isUpdated()) {
+  while (ss.available() > 0) {
+    gps.encode(ss.read());
+    if (gps.location.isUpdated()) {
+      if (archivo)
+      {
         archivo.print("Lat= ");
         archivo.print(gps.location.lat(), 6);
         archivo.print(", Lon= ");
@@ -220,6 +221,48 @@ void guarda() {
     }
   }
 }
+//void guarda() {
+//  SdFile::dateTimeCallback(datarchivo);
+//  archivo = SD.open(nombrearchivo, FILE_WRITE);
+//  unsigned long age;
+//  gps.encode(ss.read());
+//  if (archivo)
+//  {
+//    while (ss.available() > 0) {
+//      gps.encode(ss.read());
+//      if (gps.location.isUpdated()) {
+//        archivo.print("Lat= ");
+//        archivo.print(gps.location.lat(), 6);
+//        archivo.print(", Lon= ");
+//        archivo.print(gps.location.lng(), 6);
+//        archivo.print(", ");
+//        archivo.print(", Age= ");
+//        archivo.print(gps.location.age());
+//        archivo.print("ms, ");
+//        DateTime now = rtc.now();
+//
+//        archivo.print(now.year(), DEC);
+//        archivo.print('/');
+//        archivo.print(now.month(), DEC);
+//        archivo.print('/');
+//        archivo.print(now.day(), DEC);
+//        archivo.print(" (");
+//        archivo.print(daysOfTheWeek[now.dayOfTheWeek()]);
+//        archivo.print(") ");
+//        archivo.print(now.hour(), DEC);
+//        archivo.print(':');
+//        archivo.print(now.minute(), DEC);
+//        archivo.print(':');
+//        archivo.print(now.second(), DEC);
+//        archivo.print(", ");
+//        potenguar(); // guarda info del potenciometro
+//        Serial.println(" ");
+//        archivo.close();
+//        Serial.println("\nActualización guardada");
+//      }
+//    }
+//  }
+//}
 //----------------------------------------------------------------------
 void openfile() {
   Serial.print("\nCont archivo "); Serial.print(nombrearchivo); Serial.println(":");
@@ -234,7 +277,7 @@ void openfile() {
     archivo.close();
   } else {
     // if the file didn't open, print an error:
-    Serial.println("error opening datos.txt");
+    Serial.print("El archivo ");Serial.print(nombrearchivo); Serial.println(" no se abrió");
   }
 }
 //---------------------------------------------------------------------
@@ -367,6 +410,6 @@ void guardahistorial() {
   }
   else
   {
-    Serial.println("El archivo datos.txt no se abrió");
+    Serial.print("El archivo ");Serial.print(nombrearchivo); Serial.println(" no se abrió");
   }
 }
