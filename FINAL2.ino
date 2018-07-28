@@ -111,16 +111,18 @@ void getgps() {
   Serial.println("\nGPS info");
   unsigned long age;
   // This sketch displays information every time a new sentence is correctly encoded.
-  //  while (ss.available() > 0) {
-  gps.encode(ss.read());
-  //  if (gps.location.isUpdated()) {
-  Serial.print("Lat= ");
-  Serial.print(gps.location.lat(), 6);
-  Serial.print(" Lon= ");
-  Serial.print(gps.location.lng(), 6);
-  Serial.print(", Age= ");
-  Serial.print(gps.location.age());
-  Serial.println("ms.");
+  while (ss.available() > 0) {
+    gps.encode(ss.read());
+    if (gps.location.isUpdated()) {
+      Serial.print("Lat= ");
+      Serial.print(gps.location.lat(), 6);
+      Serial.print(" Lon= ");
+      Serial.print(gps.location.lng(), 6);
+      Serial.print(", Age= ");
+      Serial.print(gps.location.age());
+      Serial.println("ms.");
+    }
+  }
 }
 //-----------------------------------------------------------------------------------------
 void cardinfo() {
@@ -182,8 +184,6 @@ void guarda() {
   SdFile::dateTimeCallback(datarchivo);
   archivo = SD.open(nombrearchivo, FILE_WRITE);
   unsigned long age;
-
-  gps.encode(ss.read());
   while (ss.available() > 0) {
     gps.encode(ss.read());
     if (gps.location.isUpdated()) {
@@ -277,7 +277,7 @@ void openfile() {
     archivo.close();
   } else {
     // if the file didn't open, print an error:
-    Serial.print("El archivo ");Serial.print(nombrearchivo); Serial.println(" no se abrió");
+    Serial.print("El archivo "); Serial.print(nombrearchivo); Serial.println(" no se abrió");
   }
 }
 //---------------------------------------------------------------------
@@ -410,6 +410,6 @@ void guardahistorial() {
   }
   else
   {
-    Serial.print("El archivo ");Serial.print(nombrearchivo); Serial.println(" no se abrió");
+    Serial.print("El archivo "); Serial.print(nombrearchivo); Serial.println(" no se abrió");
   }
 }
