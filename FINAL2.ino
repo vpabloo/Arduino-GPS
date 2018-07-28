@@ -110,19 +110,19 @@ void loop() {
 void getgps() {
   Serial.println("\nGPS info");
   unsigned long age;
+  gps.encode(ss.read());
   // This sketch displays information every time a new sentence is correctly encoded.
-  while (ss.available() > 0) {
-    gps.encode(ss.read());
-    if (gps.location.isUpdated()) {
-      Serial.print("Lat= ");
-      Serial.print(gps.location.lat(), 6);
-      Serial.print(" Lon= ");
-      Serial.print(gps.location.lng(), 6);
-      Serial.print(", Age= ");
-      Serial.print(gps.location.age());
-      Serial.println("ms.");
-    }
-  }
+  //  while (ss.available() > 0) {
+  //   if (gps.location.isUpdated()) {
+  Serial.print("Lat= ");
+  Serial.print(gps.location.lat(), 6);
+  Serial.print(" Lon= ");
+  Serial.print(gps.location.lng(), 6);
+  Serial.print(", Age= ");
+  Serial.print(gps.location.age());
+  Serial.println("ms.");
+  // }
+  //}
 }
 //-----------------------------------------------------------------------------------------
 void cardinfo() {
