@@ -182,11 +182,11 @@ void cardinfo() {
 //----------------------------------------------------------------------------------
 void guarda() {
   SdFile::dateTimeCallback(datarchivo);
-  archivo = SD.open(nombrearchivo, FILE_WRITE);
   unsigned long age;
   while (ss.available() > 0) {
     gps.encode(ss.read());
     if (gps.location.isUpdated()) {
+      archivo = SD.open(nombrearchivo, FILE_WRITE);
       if (archivo)
       {
         archivo.print("Lat= ");
@@ -218,6 +218,7 @@ void guarda() {
         archivo.close();
         Serial.println("\nActualización guardada");
       }
+      archivo.close();
     }
   }
 }
@@ -383,7 +384,7 @@ void guardahistorial() {
 
     archivo.print("Lat= ");
     archivo.print(gps.location.lat(), 6);
-    archivo.print(" Lon= ");
+    archivo.print(", Lon= ");
     archivo.print(gps.location.lng(), 6);
     archivo.print(", Age= ");
     archivo.print(gps.location.age());
