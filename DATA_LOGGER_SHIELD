@@ -1,0 +1,189 @@
+#include <Wire.h>
+#include "RTClib.h"
+#include <SPI.h>
+#include <SD.h>
+
+char nombrearchivo[ ] = "9999.txt"; // nombre del archivo a crear en la micro sd
+
+File myFile;
+
+RTC_DS1307 rtc;
+
+// char daysOfTheWeek[7][12] = {"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"};
+
+int ledr = 7;
+int ledg = 5;
+int ledb = 6;
+#define COMMON_ANODE
+
+void setup () {
+  Serial.begin(57600);
+  pinMode(ledr, OUTPUT);
+  pinMode(ledg, OUTPUT);
+  pinMode(ledb, OUTPUT);
+
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+  if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    crojo();
+    while (1);
+  }
+  if (! rtc.isrunning()) {
+    Serial.println("RTC is NOT running!");
+    errorRTC();
+    // rtc.adjust(DateTime(2018, 8, 21, 21, 59, 0));
+  }
+  Serial.print("Iniciando tarjeta SD... ");
+  if (!SD.begin(10)) {
+    Serial.println("inicio fallido");
+    errorSD();
+    while (1);
+  }
+  Serial.println("inicio exitoso");
+  capagado();
+  cverde();
+  delay(500);
+  cazul();
+  delay(500);
+  crojo();
+  delay(500);
+  cazul();
+  delay(3000);
+}
+void loop () {
+  verifisd();
+  guardaSD();
+}
+//----------------------------------
+void guardaSD() {
+  SdFile::dateTimeCallback(datarchivo);
+  myFile = SD.open(nombrearchivo, FILE_WRITE);
+  if (myFile) {
+    DateTime now = rtc.now();
+    myFile.print("9999, ");
+    myFile.print(now.year(), DEC);
+    myFile.print('/');
+    myFile.print(now.month(), DEC);
+    myFile.print('/');
+    myFile.print(now.day(), DEC);
+    // myFile.print(" (");
+    // myFile.print(daysOfTheWeek[now.dayOfTheWeek()]);
+    // myFile.print(") ");
+    myFile.print(", ");
+    myFile.print(now.hour(), DEC);
+    myFile.print(':');
+    myFile.print(now.minute(), DEC);
+    myFile.print(':');
+    myFile.print(now.second(), DEC);
+    myFile.print(", ");
+    myFile.print("COMBUST");
+    myFile.println();
+    myFile.close();
+    Serial.println("Texto guardado");
+    cverde();
+    delay(1000);
+    cazul();
+    delay(500);
+  }
+  else
+  {
+    Serial.println("error abriendo archivo de texto");
+    errorARCH();
+  }
+}
+//-------------------------
+void imprimeRDT () {
+  DateTime now = rtc.now();
+
+  Serial.print(now.year(), DEC);
+  Serial.print('/');
+  Serial.print(now.month(), DEC);
+  Serial.print('/');
+  Serial.print(now.day(), DEC);
+  Serial.print(" (");
+  Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+  Serial.print(") ");
+  Serial.print(now.hour(), DEC);
+  Serial.print(':');
+  Serial.print(now.minute(), DEC);
+  Serial.print(':');
+  Serial.print(now.second(), DEC);
+  Serial.println();
+  guardaSD();
+}
+//----------------------------------
+void verifisd() {
+  if (!SD.begin(10)) {
+    Serial.println("Error en MicroSD");
+    errorSD();
+    while (1);
+  }
+}
+//--------------------------------
+void datarchivo(uint16_t* date, uint16_t* time) {
+  DateTime now = rtc.now();
+  // return date using FAT_DATE macro to format fields
+  *date = FAT_DATE(now.year(), now.month(), now.day());
+  // return time using FAT_TIME macro to format fields
+  *time = FAT_TIME(now.hour(), now.minute(), now.second());
+}
+//--------------------------------
+void setColor(int redValue, int greenValue, int blueValue) {
+#ifdef COMMON_ANODE
+  redValue = 255 - redValue;
+  greenValue = 255 - greenValue;
+  blueValue = 255 - blueValue;
+#endif
+  analogWrite(ledr, redValue);
+  analogWrite(ledg, greenValue);
+  analogWrite(ledb, blueValue);
+}
+//--------------------
+void crojo() {
+  setColor(255, 0, 0);
+}
+//--------------------
+void cverde() {
+  setColor(0, 255, 0);
+}
+//--------------------
+void cazul() {
+  setColor(0, 0, 255);
+}
+//--------------------
+void capagado() {
+  setColor(0, 0, 0);
+}
+//--------------------
+void camarillo() {
+  setColor(255, 255, 0);
+}
+//--------------------
+void errorSD() {
+  while (0 == 0) {
+    crojo();
+    delay(300);
+    capagado();
+    delay(300);
+  }
+}
+//--------------------
+void errorRTC() {
+  while (0 == 0) {
+    camarillo();
+    delay(300);
+    capagado();
+    delay(300);
+  }
+}
+//--------------------
+void errorARCH() {
+  while (0 == 0) {
+    crojo();
+    delay(300);
+    camarillo();
+    delay(300);
+  }
+}
